@@ -36,8 +36,6 @@ final class RequestSender implements RequestSenderInterface
             $queryStrings[self::QUERY_KEY_RESOLUTION] = $resolutionType->value;
         }
         if ($time) {
-            //	2004-02-12T15:19:21+00:00
-            //  The time can be abbreviated e.g 2012-11-19T15:00:00Z is identical to 2012-11-19T15Z.
             $queryStrings[self::QUERY_KEY_TIME] = gmdate(self::TIME_FORMAT, $time);
         }
         $data = $this->jsonRequestSender->get(self::FRIENDLY_NAME, $url, $queryStrings);

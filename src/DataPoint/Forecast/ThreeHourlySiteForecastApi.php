@@ -13,6 +13,8 @@ use ChristianBrown\MetOffice\DataPoint\Forecast\Transformer\ForecastTransformer;
 use ChristianBrown\MetOffice\DataPoint\Forecast\Transformer\ForecastTransformerInterface;
 use ChristianBrown\MetOffice\DataPoint\RequestSender;
 
+use function time;
+
 final class ThreeHourlySiteForecastApi implements ThreeHourlySiteForecastApiInterface
 {
     private ForecastTransformerInterface $forecastTransformer;
@@ -24,11 +26,30 @@ final class ThreeHourlySiteForecastApi implements ThreeHourlySiteForecastApiInte
         $this->forecastTransformer = new ForecastTransformer(self::FRIENDLY_NAME);
     }
 
-    public function get(int $locationId, string $time): Forecast
+    public function get(int $locationId): Forecast
     {
         $data = $this->requestSender->get(DataType::VALUES, ApiType::FORECAST, LocationType::ALL, $locationId, ResolutionType::THREE_HOURLY);
         $forecast = $this->forecastTransformer->transform($data);
 
         return $forecast;
+    }
+
+    public function getOnePeriod(int $locationId, ?int $time = null): Forecast
+    {
+        $roundedTime = self::getRoundedToThreeHours($time);
+        $data = $this->requestSender->get(DataType::VALUES, ApiType::FORECAST, LocationType::ALL, $locationId, ResolutionType::THREE_HOURLY, $roundedTime);
+        $forecast = $this->forecastTransformer->transform($data);
+
+        return $forecast;
+    }
+
+    private static function getRoundedToThreeHours(?int $time = null): int
+    {
+        if (null === $time) {
+            $time = time();
+        }
+        $rounded = (int) round($time / self::SECS_PER_3_HOURS) * self::SECS_PER_3_HOURS;
+
+        return $rounded;
     }
 }

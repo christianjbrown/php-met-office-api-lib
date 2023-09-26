@@ -8,5 +8,9 @@ use ChristianBrown\MetOffice\DataPoint\Forecast\Model\Forecast;
 
 interface ThreeHourlySiteForecastApiInterface extends ForecastApiInterface
 {
-    public function get(int $locationId, string $time): Forecast;
+    public const SECS_PER_3_HOURS = 60 * 60 * 3;
+
+    public function get(int $locationId): Forecast;
+
+    public function getOnePeriod(int $locationId, ?int $time = null): Forecast;
 }

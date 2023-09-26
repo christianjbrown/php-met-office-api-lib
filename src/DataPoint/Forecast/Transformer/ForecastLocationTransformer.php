@@ -16,10 +16,12 @@ final class ForecastLocationTransformer implements ForecastLocationTransformerIn
 {
     private string $friendlyName;
     private ForecastLocationPeriodsTransformerInterface $periodsTransformer;
+    private ForecastLocationPeriodTransformerInterface $periodTransformer;
 
     public function __construct(string $friendlyName)
     {
         $this->friendlyName = $friendlyName;
+        $this->periodTransformer = new ForecastLocationPeriodTransformer($friendlyName);
         $this->periodsTransformer = new ForecastLocationPeriodsTransformer($friendlyName);
     }
 
@@ -57,7 +59,12 @@ final class ForecastLocationTransformer implements ForecastLocationTransformerIn
         if (empty($data[self::DATA_KEY_PERIODS]) || !is_array($data[self::DATA_KEY_PERIODS])) {
             throw new UserFriendlyException(sprintf('Response from %s was not as expected, missing or corrupt "%s".', $this->friendlyName, self::DATA_KEY_PERIODS));
         }
-        $periods = $this->periodsTransformer->transform($data[self::DATA_KEY_PERIODS]);
+        if (array_is_list($data[self::DATA_KEY_PERIODS])) {
+            $periods = $this->periodsTransformer->transform($data[self::DATA_KEY_PERIODS]);
+        } else {
+            $periods = [];
+            $periods[] = $this->periodTransformer->transform($data[self::DATA_KEY_PERIODS]);
+        }
 
         $location = new ForecastLocation($id, $continent, $country, $elevation, $latitude, $longitude, $name, $periods);
 

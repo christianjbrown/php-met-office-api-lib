@@ -8,11 +8,10 @@ use ChristianBrown\MetOffice\DataPoint\Enums\Visibility;
 use ChristianBrown\MetOffice\DataPoint\Enums\WeatherType;
 use ChristianBrown\MetOffice\DataPoint\Enums\WindDirection;
 
-final class ForecastLocationPeriodRepresentation
+abstract class AbstractForecastLocationPeriodRepresentation
 {
     public readonly int $feelsLike;
     public readonly int $maxUvIndex;
-    public readonly int $minutesIntoDay;
     public readonly int $precipitationProbability;
     public readonly int $screenRelativeHumidity;
     public readonly int $temperature;
@@ -22,11 +21,10 @@ final class ForecastLocationPeriodRepresentation
     public readonly int $windGust;
     public readonly int $windSpeed;
 
-    public function __construct(int $feelsLike, int $maxUvIndex, int $minutesIntoDay, int $precipitationProbability, int $screenRelativeHumidity, int $temperature, Visibility $visibility, WeatherType $weatherType, WindDirection $windDirection, int $windGust, int $windSpeed)
+    public function __construct(int $feelsLike, int $maxUvIndex, int $precipitationProbability, int $screenRelativeHumidity, int $temperature, Visibility $visibility, WeatherType $weatherType, WindDirection $windDirection, int $windGust, int $windSpeed)
     {
         $this->feelsLike = $feelsLike;
         $this->maxUvIndex = $maxUvIndex;
-        $this->minutesIntoDay = $minutesIntoDay;
         $this->precipitationProbability = $precipitationProbability;
         $this->screenRelativeHumidity = $screenRelativeHumidity;
         $this->temperature = $temperature;

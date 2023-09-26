@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace ChristianBrown\MetOffice\DataPoint\Forecast\Transformer;
 
+use ChristianBrown\MetOffice\DataPoint\Enums\RepresentationTimePeriod;
 use ChristianBrown\MetOffice\DataPoint\Enums\Visibility;
 use ChristianBrown\MetOffice\DataPoint\Enums\WeatherType;
 use ChristianBrown\MetOffice\DataPoint\Enums\WindDirection;
-use ChristianBrown\MetOffice\DataPoint\Forecast\Model\ForecastLocationPeriodRepresentation;
+use ChristianBrown\MetOffice\DataPoint\Forecast\Model\AbstractForecastLocationPeriodRepresentation;
+use ChristianBrown\MetOffice\DataPoint\Forecast\Model\ForecastLocationDayPeriodRepresentation;
+use ChristianBrown\MetOffice\DataPoint\Forecast\Model\ForecastLocationShortPeriodRepresentation;
 use ChristianBrown\UserFriendlyException\UserFriendlyException;
 
 use function is_numeric;
@@ -23,7 +26,7 @@ final class ForecastLocationPeriodRepresentationTransformer implements ForecastL
         $this->friendlyName = $friendlyName;
     }
 
-    public function transform(array $data): ForecastLocationPeriodRepresentation
+    public function transform(array $data): AbstractForecastLocationPeriodRepresentation
     {
         if (!isset($data[self::DATA_KEY_FEELS_LIKE]) || !is_numeric($data[self::DATA_KEY_FEELS_LIKE])) {
             throw new UserFriendlyException(sprintf('Response from %s was not as expected, missing or corrupt "%s".', $this->friendlyName, self::DATA_KEY_FEELS_LIKE));
@@ -34,11 +37,6 @@ final class ForecastLocationPeriodRepresentationTransformer implements ForecastL
             throw new UserFriendlyException(sprintf('Response from %s was not as expected, missing or corrupt "%s".', $this->friendlyName, self::DATA_KEY_MAX_UV_INDEX));
         }
         $maxUvIndex = (int) $data[self::DATA_KEY_MAX_UV_INDEX];
-
-        if (!isset($data[self::DATA_KEY_MINUTES_IN_TO_DAY]) || !is_numeric($data[self::DATA_KEY_MINUTES_IN_TO_DAY])) {
-            throw new UserFriendlyException(sprintf('Response from %s was not as expected, missing or corrupt "%s".', $this->friendlyName, self::DATA_KEY_MINUTES_IN_TO_DAY));
-        }
-        $minutesIntoDay = (int) $data[self::DATA_KEY_MINUTES_IN_TO_DAY];
 
         if (!isset($data[self::DATA_KEY_PRECIPITATION_PROBABILITY]) || !is_numeric($data[self::DATA_KEY_PRECIPITATION_PROBABILITY])) {
             throw new UserFriendlyException(sprintf('Response from %s was not as expected, missing or corrupt "%s".', $this->friendlyName, self::DATA_KEY_PRECIPITATION_PROBABILITY));
@@ -80,8 +78,20 @@ final class ForecastLocationPeriodRepresentationTransformer implements ForecastL
         }
         $windSpeed = (int) $data[self::DATA_KEY_WIND_SPEED];
 
-        $resolution = new ForecastLocationPeriodRepresentation($feelsLike, $maxUvIndex, $minutesIntoDay, $precipitationProbability, $screenRelativeHumidity, $temperature, $visibility, $weatherType, $windDirection, $windGust, $windSpeed);
+        if (!isset($data[self::DATA_KEY_TIME_PERIOD])) {
+            throw new UserFriendlyException(sprintf('Response from %s was not as expected, missing or corrupt "%s".', $this->friendlyName, self::DATA_KEY_TIME_PERIOD));
+        }
 
-        return $resolution;
+        if (is_numeric($data[self::DATA_KEY_TIME_PERIOD])) {
+            $timePeriod = (int) $data[self::DATA_KEY_TIME_PERIOD];
+            $representation = new ForecastLocationShortPeriodRepresentation($feelsLike, $maxUvIndex, $timePeriod, $precipitationProbability, $screenRelativeHumidity, $temperature, $visibility, $weatherType, $windDirection, $windGust, $windSpeed);
+        } elseif (is_string($data[self::DATA_KEY_TIME_PERIOD]) && RepresentationTimePeriod::tryFrom($data[self::DATA_KEY_TIME_PERIOD])) {
+            $timePeriod = RepresentationTimePeriod::from($data[self::DATA_KEY_TIME_PERIOD]);
+            $representation = new ForecastLocationDayPeriodRepresentation($feelsLike, $maxUvIndex, $timePeriod, $precipitationProbability, $screenRelativeHumidity, $temperature, $visibility, $weatherType, $windDirection, $windGust, $windSpeed);
+        } else {
+            throw new UserFriendlyException(sprintf('Response from %s was not as expected, missing or corrupt "%s".', $this->friendlyName, self::DATA_KEY_TIME_PERIOD));
+        }
+
+        return $representation;
     }
 }
