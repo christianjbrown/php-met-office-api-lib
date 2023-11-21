@@ -8,6 +8,39 @@ use ChristianBrown\MetOffice\DataPoint\Enums\WeatherType;
 
 interface WeatherTypeTransformerInterface
 {
+    public const WEATHER_TYPE_EMOJIS = [
+        WeatherType::CLEAR_NIGHT->value => '🌙',
+        WeatherType::CLOUDY->value => '☁️',
+        WeatherType::DRIZZLE->value => '🌧️',
+        WeatherType::FOG->value => '🌫️',
+        WeatherType::HAIL->value => '🌨',
+        WeatherType::HAIL_SHOWER_DAY->value => '🌨',
+        WeatherType::HAIL_SHOWER_NIGHT->value => '🌨',
+        WeatherType::HEAVY_RAIN->value => '🌧',
+        WeatherType::HEAVY_RAIN_SHOWER_DAY->value => '🌧',
+        WeatherType::HEAVY_RAIN_SHOWER_NIGHT->value => '🌧',
+        WeatherType::HEAVY_SNOW->value => '🌨',
+        WeatherType::HEAVY_SNOW_SHOWER_DAY->value => '🌨',
+        WeatherType::HEAVY_SNOW_SHOWER_NIGHT->value => '🌨',
+        WeatherType::LIGHT_RAIN->value => '🌦',
+        WeatherType::LIGHT_RAIN_SHOWER_DAY->value => '🌦',
+        WeatherType::LIGHT_RAIN_SHOWER_NIGHT->value => '🌧',
+        WeatherType::LIGHT_SNOW->value => '🌨',
+        WeatherType::LIGHT_SNOW_SHOWER_DAY->value => '🌨️',
+        WeatherType::LIGHT_SNOW_SHOWER_NIGHT->value => '🌨️',
+        WeatherType::MIST->value => '🌫️',
+        WeatherType::OVERCAST->value => '🌥',
+        WeatherType::PARTLY_CLOUDY_DAY->value => '☁️',
+        WeatherType::PARTLY_CLOUDY_NIGHT->value => '☁️',
+        WeatherType::SLEET->value => '🌨',
+        WeatherType::SLEET_SHOWER_DAY->value => '🌨️',
+        WeatherType::SLEET_SHOWER_NIGHT->value => '🌨️',
+        WeatherType::SUNNY_DAY->value => '☀️',
+        WeatherType::THUNDER->value => '🌩',
+        WeatherType::THUNDER_SHOWER_DAY->value => '⛈️',
+        WeatherType::THUNDER_SHOWER_NIGHT->value => '⛈️',
+        WeatherType::TRACE_RAIN->value => '🌧',
+    ];
     public const WEATHER_TYPE_NAMES = [
         WeatherType::CLEAR_NIGHT->value => 'Clear night',
         WeatherType::CLOUDY->value => 'Cloudy',
@@ -43,4 +76,6 @@ interface WeatherTypeTransformerInterface
     ];
 
     public function transform(WeatherType $weatherType): ?string;
+
+    public function transformToEmoji(WeatherType $weatherType): ?string;
 }

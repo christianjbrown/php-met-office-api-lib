@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ChristianBrown\MetOffice\DataPoint;
 
 use ChristianBrown\JsonApiClient\BadResponseTransformerInterface;
+
 use Psr\Http\Message\ResponseInterface;
 
 use function is_string;

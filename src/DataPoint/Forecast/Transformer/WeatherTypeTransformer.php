@@ -17,4 +17,14 @@ final class WeatherTypeTransformer implements WeatherTypeTransformerInterface
 
         return $type;
     }
+
+    public function transformToEmoji(WeatherType $weatherType): ?string
+    {
+        $emoji = null;
+        if (!empty(self::WEATHER_TYPE_EMOJIS[$weatherType->value])) {
+            $emoji = self::WEATHER_TYPE_EMOJIS[$weatherType->value];
+        }
+
+        return $emoji;
+    }
 }
