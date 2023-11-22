@@ -13,6 +13,7 @@ use ChristianBrown\MetOffice\DataPoint\Forecast\Transformer\ForecastTransformer;
 use ChristianBrown\MetOffice\DataPoint\Forecast\Transformer\ForecastTransformerInterface;
 use ChristianBrown\MetOffice\DataPoint\RequestSender;
 
+use function intdiv;
 use function time;
 
 final class ThreeHourlySiteForecastApi implements ThreeHourlySiteForecastApiInterface
@@ -48,7 +49,7 @@ final class ThreeHourlySiteForecastApi implements ThreeHourlySiteForecastApiInte
         if (null === $time) {
             $time = time();
         }
-        $rounded = (int) round($time / self::SECS_PER_3_HOURS) * self::SECS_PER_3_HOURS;
+        $rounded = intdiv($time, self::SECS_PER_3_HOURS) * self::SECS_PER_3_HOURS;
 
         return $rounded;
     }
