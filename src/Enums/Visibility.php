@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ChristianBrown\MetOffice\DataPoint\Enums;
+namespace ChristianBrown\MetOffice\Enums;
 
 enum Visibility: string
 {
