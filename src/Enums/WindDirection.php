@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ChristianBrown\MetOffice\DataPoint\Enums;
+namespace ChristianBrown\MetOffice\Enums;
+
+use function round;
 
 enum WindDirection: string
 {
@@ -22,4 +24,35 @@ enum WindDirection: string
     case WEST = 'W';
     case WEST_NORTH_WEST = 'WNW';
     case WEST_SOUTH_WEST = 'WSW';
+
+    /**
+     * Maps a compass bearing in degrees (0 = North, increasing clockwise) to the
+     * nearest of the 16 points of the compass. Bearings outside 0-359 are
+     * normalised, so 360, 720 and -10 all resolve as expected.
+     */
+    public static function fromDegrees(int $degrees): self
+    {
+        $points = [
+            self::NORTH,
+            self::NORTH_NORTH_EAST,
+            self::NORTH_EAST,
+            self::EAST_NORTH_EAST,
+            self::EAST,
+            self::EAST_SOUTH_EAST,
+            self::SOUTH_EAST,
+            self::SOUTH_SOUTH_EAST,
+            self::SOUTH,
+            self::SOUTH_SOUTH_WEST,
+            self::SOUTH_WEST,
+            self::WEST_SOUTH_WEST,
+            self::WEST,
+            self::WEST_NORTH_WEST,
+            self::NORTH_WEST,
+            self::NORTH_NORTH_WEST,
+        ];
+        $normalised = (($degrees % 360) + 360) % 360;
+        $index = (int) round($normalised / 22.5) % 16;
+
+        return $points[$index];
+    }
 }
